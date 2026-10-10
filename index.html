@@ -5,103 +5,329 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Multi-AgentResearch and Security System</title>
   <style>
+    :root {
+      --bg: #081120;
+      --bg-elevated: rgba(15, 23, 42, 0.9);
+      --panel: rgba(11, 18, 32, 0.9);
+      --panel-alt: rgba(17, 24, 39, 0.96);
+      --panel-soft: rgba(15, 23, 42, 0.7);
+      --border: rgba(148, 163, 184, 0.22);
+      --border-strong: rgba(96, 165, 250, 0.35);
+      --text: #e5eefc;
+      --muted: #9aa9bf;
+      --primary: #60a5fa;
+      --primary-strong: #3b82f6;
+      --success: #34d399;
+      --warning: #fbbf24;
+      --danger: #f87171;
+      --shadow: 0 24px 60px rgba(2, 6, 23, 0.5);
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0d1117; color: #c9d1d9; min-height: 100vh; padding: 24px; }
-    h1 { color: #58a6ff; font-size: 1.8rem; margin-bottom: 8px; }
-    .subtitle { color: #8b949e; margin-bottom: 32px; font-size: 0.9rem; }
-    .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 24px; margin-bottom: 20px; }
-    label { display: block; color: #8b949e; font-size: 0.85rem; margin-bottom: 6px; }
-    input, select, textarea { width: 100%; background: #0d1117; border: 1px solid #30363d; color: #c9d1d9; padding: 10px 14px; border-radius: 6px; font-size: 0.95rem; outline: none; }
-    input:focus, select:focus { border-color: #58a6ff; }
-    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-    .btn { background: #238636; color: #fff; border: none; padding: 11px 24px; border-radius: 6px; font-size: 0.95rem; cursor: pointer; font-weight: 600; }
-    .btn:hover { background: #2ea043; }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .btn-secondary { background: #21262d; border: 1px solid #30363d; }
-    .btn-secondary:hover { background: #30363d; }
-    .status { padding: 8px 14px; border-radius: 6px; font-size: 0.85rem; display: inline-block; }
-    .status-pending { background: #2d333b; color: #8b949e; }
-    .status-done { background: #1f3d2b; color: #3fb950; }
-    .status-error { background: #3d1f1f; color: #f85149; }
-    .status-blocked { background: #3d2d1f; color: #d29922; }
-    #report-box { background: #0d1117; border: 1px solid #30363d; border-radius: 6px; padding: 16px; font-size: 0.9rem; line-height: 1.6; white-space: pre-wrap; max-height: 400px; overflow-y: auto; }
-    #diff-box { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 14px; font-size: 0.85rem; white-space: pre-wrap; color: #8b949e; }
-    .diff-new { color: #3fb950; }
-    .diff-removed { color: #f85149; }
+
+    body {
+      font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(59, 130, 246, 0.18), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.12), transparent 22%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 32px 20px;
+      letter-spacing: -0.01em;
+    }
+
+    .app-shell {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 28px;
+      padding: 12px 4px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, rgba(96, 165, 250, 0.18), rgba(52, 211, 153, 0.18));
+      border: 1px solid var(--border-strong);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    h1 {
+      color: var(--text);
+      font-size: clamp(2rem, 2vw + 1rem, 2.8rem);
+      line-height: 1.1;
+      margin: 0;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin-top: 8px;
+      margin-bottom: 0;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(11, 18, 32, 0.96));
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 22px 22px 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--primary);
+      font-size: 1.02rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-bottom: 8px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      background: rgba(8, 17, 32, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      color: var(--text);
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 0.96rem;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    input::placeholder { color: #70819a; }
+    input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.12); }
+
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 18px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-strong));
+      color: white;
+      border: none;
+      padding: 11px 18px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+      box-shadow: 0 10px 24px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 12px 26px rgba(59, 130, 246, 0.35); }
+    .btn:disabled { opacity: 0.65; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .btn-secondary {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--border);
+      box-shadow: none;
+      color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(30, 41, 59, 0.8);
+      box-shadow: none;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      border: 1px solid transparent;
+    }
+
+    .status-pending { background: rgba(148, 163, 184, 0.12); color: #dbe4f4; border-color: rgba(148, 163, 184, 0.2); }
+    .status-done { background: rgba(52, 211, 153, 0.12); color: #7ef0c1; border-color: rgba(52, 211, 153, 0.25); }
+    .status-error { background: rgba(248, 113, 113, 0.12); color: #fca5a5; border-color: rgba(248, 113, 113, 0.25); }
+    .status-blocked { background: rgba(251, 191, 36, 0.12); color: #fcd34d; border-color: rgba(251, 191, 36, 0.25); }
+
+    #report-box {
+      background: rgba(8, 17, 32, 0.92);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 0.92rem;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      max-height: 420px;
+      overflow-y: auto;
+      color: #dbe8ff;
+    }
+
+    #diff-box {
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      color: var(--muted);
+    }
+
+    .diff-new { color: var(--success); }
+    .diff-removed { color: var(--danger); }
+
     #session-box { font-size: 0.85rem; }
-    .msg { padding: 8px 12px; border-radius: 6px; margin-bottom: 8px; max-width: 80%; }
-    .msg-user { background: #1c2128; margin-left: auto; }
-    .msg-assistant { background: #161b22; }
-    .actions { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
-    #spinner { display: none; width: 16px; height: 16px; border: 2px solid #30363d; border-top-color: #58a6ff; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-left: 8px; }
+
+    .msg {
+      padding: 10px 12px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      max-width: 80%;
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      line-height: 1.5;
+    }
+
+    .msg-user {
+      background: rgba(30, 41, 59, 0.75);
+      margin-left: auto;
+      text-align: left;
+    }
+
+    .msg-assistant {
+      background: rgba(17, 24, 39, 0.85);
+    }
+
+    .actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+
+    #spinner {
+      display: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(148, 163, 184, 0.3);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+      vertical-align: middle;
+    }
+
     @keyframes spin { to { transform: rotate(360deg); } }
-    .section-title { color: #58a6ff; font-size: 1rem; font-weight: 600; margin-bottom: 16px; }
+
+    @media (max-width: 760px) {
+      .row { grid-template-columns: 1fr; }
+      .topbar { flex-direction: column; align-items: flex-start; }
+      .card { padding: 18px 16px; }
+      .msg { max-width: 100%; }
+    }
   </style>
 </head>
 <body>
-  <h1>Autonomous Research Agent</h1>
-  <p class="subtitle">Powered by LangGraph · TensorZero · AWS Bedrock Guardrails</p>
-
-  <div class="card">
-    <div class="section-title">Authentication</div>
-    <div style="display:flex;gap:10px;align-items:flex-end">
-      <div style="flex:1">
-        <label>API Key</label>
-        <input type="password" id="api-key" placeholder="Enter your X-API-Key (saved in browser)">
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">AI</div>
+        <div>
+          <h1>Multi-Agent Research & Security System</h1>
+          <p class="subtitle">Powered by LangGraph · TensorZero · AWS Bedrock Guardrails · Developed by Eyoongebob Cyril</p>
+        </div>
       </div>
-      <button class="btn btn-secondary" onclick="saveApiKey()" style="white-space:nowrap">Save Key</button>
-    </div>
-    <div id="key-status" style="font-size:0.8rem;color:#8b949e;margin-top:6px"></div>
-  </div>
+    </header>
 
-  <div class="card">
-    <div class="section-title">New Research Job</div>
-    <div style="margin-bottom:16px">
-      <label>Research Topic</label>
-      <input type="text" id="topic" placeholder="e.g. Quantum computing advances in 2024">
-    </div>
-    <div class="row">
-      <div>
-        <label>Output Format</label>
-        <select id="format">
-          <option value="text">Plain Text</option>
-          <option value="pdf">PDF Export</option>
-          <option value="json">Structured JSON</option>
-        </select>
+    <div class="card">
+      <div class="section-title">Authentication</div>
+      <div style="display:flex;gap:10px;align-items:flex-end">
+        <div style="flex:1">
+          <label>API Key</label>
+          <input type="password" id="api-key" placeholder="Enter your X-API-Key (saved in browser)">
+        </div>
+        <button class="btn btn-secondary" onclick="saveApiKey()" style="white-space:nowrap">Save Key</button>
       </div>
-      <div>
-        <label>Session ID (optional)</label>
-        <input type="text" id="session-id" placeholder="Leave blank to auto-generate">
+      <div id="key-status" style="font-size:0.8rem;color:#9aa9bf;margin-top:8px"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">New Research Job</div>
+      <div style="margin-bottom:16px">
+        <label>Research Topic</label>
+        <input type="text" id="topic" placeholder="e.g. Quantum computing advances in 2024">
       </div>
+      <div class="row">
+        <div>
+          <label>Output Format</label>
+          <select id="format">
+            <option value="text">Plain Text</option>
+            <option value="pdf">PDF Export</option>
+            <option value="json">Structured JSON</option>
+          </select>
+        </div>
+        <div>
+          <label>Session ID (optional)</label>
+          <input type="text" id="session-id" placeholder="Leave blank to auto-generate">
+        </div>
+      </div>
+      <button class="btn" onclick="submitResearch()" id="submit-btn">
+        Start Research
+        <span id="spinner"></span>
+      </button>
     </div>
-    <button class="btn" onclick="submitResearch()" id="submit-btn">
-      Start Research
-      <span id="spinner"></span>
-    </button>
-  </div>
 
-  <div class="card" id="result-card" style="display:none">
-    <div class="section-title">Result</div>
-    <div style="margin-bottom:12px">
-      <span id="job-status" class="status status-pending">Pending</span>
-      <span style="color:#8b949e;font-size:0.8rem;margin-left:10px" id="job-id-label"></span>
+    <div class="card" id="result-card" style="display:none">
+      <div class="section-title">Result</div>
+      <div style="margin-bottom:12px">
+        <span id="job-status" class="status status-pending">Pending</span>
+        <span style="color:#9aa9bf;font-size:0.8rem;margin-left:10px" id="job-id-label"></span>
+      </div>
+      <div id="report-box" style="display:none"></div>
+      <div class="actions" id="export-actions" style="display:none">
+        <button class="btn btn-secondary" onclick="downloadPDF()">Download PDF</button>
+        <button class="btn btn-secondary" onclick="copyJSON()">Copy JSON</button>
+        <button class="btn btn-secondary" onclick="loadDiff()">Show Changes vs Previous</button>
+      </div>
+      <div id="diff-box" style="display:none;margin-top:14px"></div>
     </div>
-    <div id="report-box" style="display:none"></div>
-    <div class="actions" id="export-actions" style="display:none">
-      <button class="btn btn-secondary" onclick="downloadPDF()">Download PDF</button>
-      <button class="btn btn-secondary" onclick="copyJSON()">Copy JSON</button>
-      <button class="btn btn-secondary" onclick="loadDiff()">Show Changes vs Previous</button>
-    </div>
-    <div id="diff-box" style="display:none;margin-top:14px"></div>
-  </div>
 
-  <div class="card">
-    <div class="section-title">Session History
-      <button class="btn btn-secondary" style="float:right;font-size:0.8rem;padding:4px 12px" onclick="newSession()">New Session</button>
+    <div class="card">
+      <div class="section-title">
+        <span>Session History</span>
+        <button class="btn btn-secondary" style="font-size:0.8rem;padding:6px 12px" onclick="newSession()">New Session</button>
+      </div>
+      <p style="color:#9aa9bf;font-size:0.8rem;margin-bottom:12px">Session ID is auto-reused across requests so history builds up. Click "New Session" to start fresh.</p>
+      <div id="session-box"><p style="color:#9aa9bf;font-size:0.85rem">No session active.</p></div>
     </div>
-    <p style="color:#8b949e;font-size:0.8rem;margin-bottom:12px">Session ID is auto-reused across requests so history builds up. Click "New Session" to start fresh.</p>
-    <div id="session-box"><p style="color:#8b949e;font-size:0.85rem">No session active.</p></div>
-  </div>
+  </main>
 
   <script>
     const API = window.location.hostname === 'localhost' ? 'http://localhost:8000' : '';
