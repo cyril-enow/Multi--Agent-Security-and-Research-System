@@ -145,7 +145,7 @@ terraform apply -var="app_image=placeholder" -var="pyrit_image=placeholder"
 
 Type `yes` when asked. Takes 5–10 minutes.
 
-This creates: VPC, subnets, ECS cluster, ALB, ElastiCache Redis, RDS PostgreSQL, Bedrock Guardrail, Secrets Manager, ECR repos, IAM roles, VPC endpoints, auto-scaling, EventBridge weekly red team schedule.
+This creates: VPC, subnets, ECS cluster, ALB, ElastiCache Redis, RDS PostgreSQL, Bedrock Guardrail, Secrets Manager, ECR repos, IAM roles, VPC endpoints, auto-scaling, EventBridge weekly red team schedule. Good
 
 After it finishes, note these outputs — you'll need them:
 ```
