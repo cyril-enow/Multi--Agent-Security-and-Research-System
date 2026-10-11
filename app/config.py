@@ -35,6 +35,10 @@ class Config:
         # LangSmith tracing
         self.langsmith_api_key: str = data.get("LANGSMITH_API_KEY", "")
         self.langchain_project: str = data.get("LANGCHAIN_PROJECT", "research-agent")
+        self.langchain_endpoint: str = data.get(
+            "LANGCHAIN_ENDPOINT",
+            "https://eu.api.smith.langchain.com",
+        )
         self.langsmith_dataset: str = data.get("LANGSMITH_DATASET", "research-agent-reports")
 
         # Semantic cache
@@ -84,4 +88,4 @@ class Config:
             os.environ["LANGCHAIN_TRACING_V2"] = "true"
             os.environ["LANGCHAIN_API_KEY"] = self.langsmith_api_key
             os.environ["LANGCHAIN_PROJECT"] = self.langchain_project
-            os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
+            os.environ["LANGCHAIN_ENDPOINT"] = self.langchain_endpoint

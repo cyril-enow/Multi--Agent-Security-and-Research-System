@@ -73,7 +73,7 @@ Docker is **not needed** on your machine. GitHub Actions builds and pushes image
 
 ---
 
-## Setup — Follow in Order
+## Setup — Follow in Order AS Instructed
 
 ### 1. Configure AWS credentials
 
@@ -164,7 +164,7 @@ You need three keys:
 |---|---|
 | `OPENAI_API_KEY` | https://platform.openai.com/api-keys |
 | `GROQ_API_KEY` | https://console.groq.com/keys |
-| `LANGSMITH_API_KEY` | https://smith.langchain.com → Profile → API Keys → Create |
+| `LANGSMITH_API_KEY` | Your LangSmith workspace → Settings → API Keys → Create |
 
 LangSmith is free. It traces every agent run and stores evaluation scores automatically — no extra setup needed after you add the key.
 
@@ -181,11 +181,15 @@ Replace the `REPLACE_ME` values:
 {
   "OPENAI_API_KEY":    "sk-...",
   "GROQ_API_KEY":      "gsk_...",
-  "LANGSMITH_API_KEY": "ls__..."
+  "LANGSMITH_API_KEY": "ls__...",
+  "LANGCHAIN_ENDPOINT": "https://eu.api.smith.langchain.com",
+  "LANGCHAIN_PROJECT": "research-agent"
 }
 ```
 
-Save. Leave everything else as is.
+Use the endpoint for the region of your LangSmith workspace. For a workspace at
+`eu.smith.langchain.com`, use `https://eu.api.smith.langchain.com`. Save the
+secret, then force a new ECS deployment so the app reloads it.
 
 **Optional — set an API key to protect your endpoints:**
 
