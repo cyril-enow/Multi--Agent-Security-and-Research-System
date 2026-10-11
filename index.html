@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Multi-AgentResearch and Security System</title>
+  <title>Multi-Agent Research and Security System</title>
   <style>
     :root {
       --bg: #081120;
@@ -253,81 +253,346 @@
       .msg { max-width: 100%; }
     }
   </style>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #080d18;
+      --surface: #101a2a;
+      --surface-soft: #0d1727;
+      --border: rgba(148, 163, 184, 0.16);
+      --text: #ecf2fb;
+      --muted: #91a1b8;
+      --primary: #71aaff;
+      --success: #45d6a1;
+      --danger: #ff8585;
+      --shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    }
+
+    body {
+      padding: 0;
+      background: radial-gradient(ellipse at 75% -20%, rgba(55, 106, 186, 0.15), transparent 42%), var(--bg);
+    }
+
+    button, input, select { font: inherit; }
+    :focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
+
+    .app-layout { min-height: 100vh; display: grid; grid-template-columns: 248px minmax(0, 1fr); }
+    .sidebar {
+      position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column;
+      padding: 25px 16px 18px; background: rgba(9, 16, 29, 0.94); border-right: 1px solid var(--border);
+    }
+    .brand { display: flex; align-items: center; gap: 11px; padding: 0 8px; margin-bottom: 32px; text-decoration: none; }
+    .brand-mark {
+      width: 39px; height: 39px; flex: 0 0 auto; border-radius: 11px; display: grid; place-items: center;
+      background: linear-gradient(145deg, rgba(81, 148, 255, 0.2), rgba(48, 211, 161, 0.11));
+      border: 1px solid var(--border-strong); color: var(--primary); font-size: 0.83rem;
+      font-weight: 800; letter-spacing: -0.06em;
+    }
+    .brand-name { display: block; color: var(--text); font-size: 0.85rem; font-weight: 700; letter-spacing: -0.02em; }
+    .brand-caption { display: block; color: var(--muted); font-size: 0.67rem; margin-top: 3px; letter-spacing: 0.06em; }
+    .nav-label {
+      padding: 0 11px; margin-bottom: 9px; color: #64748b; font-size: 0.66rem;
+      font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase;
+    }
+    .side-nav { display: grid; gap: 5px; }
+    .nav-link {
+      display: flex; align-items: center; gap: 11px; min-height: 42px; padding: 0 11px;
+      border: 1px solid transparent; border-radius: 9px; color: #9aaac0;
+      font-size: 0.84rem; text-decoration: none; transition: background 0.18s ease, color 0.18s ease;
+    }
+    .nav-link:hover, .nav-link:focus-visible { color: var(--text); background: rgba(148, 163, 184, 0.07); }
+    .nav-link.active { color: #dceaff; background: rgba(59, 130, 246, 0.13); border-color: rgba(96, 165, 250, 0.14); }
+    .nav-icon { width: 17px; display: inline-grid; place-items: center; color: var(--primary); font-size: 0.95rem; }
+    .sidebar-footer { margin-top: auto; padding: 14px 11px 2px; border-top: 1px solid var(--border); }
+    .sidebar-footer p { color: var(--muted); font-size: 0.73rem; line-height: 1.6; }
+    .sidebar-footer strong { display: block; color: #cbd8ea; font-size: 0.76rem; margin-bottom: 3px; }
+
+    .workspace { width: 100%; max-width: 1600px; min-width: 0; padding: 34px clamp(22px, 4vw, 58px) 48px; margin: 0 auto; }
+    .topbar { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; margin-bottom: 26px; }
+    .eyebrow { color: var(--primary); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; margin-bottom: 9px; }
+    h1 { color: var(--text); font-size: clamp(1.8rem, 2vw + 1rem, 2.45rem); line-height: 1.12; margin: 0; letter-spacing: -0.045em; }
+    .subtitle { color: var(--muted); font-size: 0.91rem; line-height: 1.6; margin-top: 9px; max-width: 660px; }
+    .header-actions { display: flex; align-items: center; gap: 12px; padding-top: 6px; }
+    .connection-badge {
+      display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--border);
+      border-radius: 999px; padding: 8px 11px; color: #bac8db;
+      background: rgba(15, 23, 42, 0.52); font-size: 0.76rem; white-space: nowrap;
+    }
+    .connection-dot { width: 7px; height: 7px; border-radius: 50%; background: #64748b; }
+    .connection-badge.is-configured .connection-dot { background: var(--success); box-shadow: 0 0 0 3px rgba(69, 214, 161, 0.12); }
+
+    .dashboard-grid { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(260px, 0.85fr); align-items: start; gap: 18px; }
+    .main-column, .support-column { min-width: 0; }
+    .card {
+      background: linear-gradient(155deg, rgba(17, 28, 46, 0.96), rgba(13, 22, 37, 0.96));
+      border: 1px solid var(--border); border-radius: 14px; padding: 21px; margin-bottom: 18px; box-shadow: var(--shadow);
+    }
+    .card-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 17px; }
+    .section-title { color: var(--text); font-size: 0.96rem; font-weight: 700; letter-spacing: -0.01em; margin: 0; }
+    .card-description { color: var(--muted); font-size: 0.79rem; line-height: 1.55; margin-top: 5px; }
+    label { display: block; color: var(--muted); font-size: 0.78rem; margin-bottom: 7px; font-weight: 600; }
+    input, select {
+      width: 100%; min-height: 43px; background: #0b1423; border: 1px solid rgba(148, 163, 184, 0.2);
+      color: var(--text); padding: 10px 12px; border-radius: 8px; font-size: 0.88rem; outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    input::placeholder { color: #6e7e95; }
+    input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.11); }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 17px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 41px;
+      background: linear-gradient(135deg, #4d96fb, #3479df); color: white; border: none;
+      padding: 10px 15px; border-radius: 8px; font-size: 0.84rem; cursor: pointer; font-weight: 700;
+      transition: transform 0.18s ease, background 0.18s ease, opacity 0.18s ease;
+      box-shadow: 0 6px 16px rgba(59, 130, 246, 0.2);
+    }
+    .btn:hover { transform: translateY(-1px); background: linear-gradient(135deg, #62a4ff, #4488ec); }
+    .btn:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
+    .btn-secondary { background: #111d30; border: 1px solid var(--border); box-shadow: none; color: #cbd8e9; }
+    .btn-secondary:hover { background: #182840; box-shadow: none; }
+    .status {
+      display: inline-flex; align-items: center; gap: 7px; padding: 7px 10px; border-radius: 999px;
+      font-size: 0.75rem; font-weight: 700; border: 1px solid transparent;
+    }
+    .status-pending { background: rgba(148, 163, 184, 0.1); color: #dbe4f4; border-color: rgba(148, 163, 184, 0.2); }
+    .status-done { background: rgba(52, 211, 153, 0.1); color: #7ef0c1; border-color: rgba(52, 211, 153, 0.25); }
+    .status-error { background: rgba(248, 113, 113, 0.1); color: #fca5a5; border-color: rgba(248, 113, 113, 0.25); }
+    .status-blocked { background: rgba(251, 191, 36, 0.1); color: #fcd34d; border-color: rgba(251, 191, 36, 0.25); }
+    #report-box {
+      background: #0a1321; border: 1px solid var(--border); border-radius: 9px; padding: 16px;
+      font-size: 0.88rem; line-height: 1.7; white-space: pre-wrap; max-height: 460px; overflow-y: auto; color: #dbe8ff;
+    }
+    #diff-box { background: #0d1727; border: 1px solid var(--border); border-radius: 9px; padding: 14px 16px; font-size: 0.82rem; line-height: 1.6; white-space: pre-wrap; color: var(--muted); }
+    .diff-new { color: var(--success); }
+    .diff-removed { color: var(--danger); }
+    #session-box { font-size: 0.84rem; }
+    .msg { padding: 11px 13px; border-radius: 10px; margin-bottom: 9px; max-width: 80%; border: 1px solid var(--border); line-height: 1.5; overflow-wrap: anywhere; }
+    .msg-user { background: rgba(30, 55, 89, 0.4); margin-left: auto; text-align: left; }
+    .msg-assistant { background: rgba(11, 21, 36, 0.85); }
+    .actions { display: flex; gap: 9px; margin-top: 14px; flex-wrap: wrap; }
+    .field-spaced { margin-bottom: 16px; }
+    .helper-card { background: linear-gradient(150deg, rgba(23, 39, 62, 0.75), rgba(13, 22, 37, 0.95)); }
+    .workflow-list { display: grid; }
+    .workflow-step { position: relative; display: grid; grid-template-columns: 27px 1fr; gap: 10px; padding-bottom: 19px; }
+    .workflow-step:last-child { padding-bottom: 0; }
+    .step-marker {
+      position: relative; z-index: 1; width: 25px; height: 25px; display: grid; place-items: center;
+      border-radius: 8px; border: 1px solid rgba(96, 165, 250, 0.23);
+      background: rgba(59, 130, 246, 0.1); color: var(--primary); font-size: 0.68rem; font-weight: 700;
+    }
+    .workflow-step:not(:last-child)::after { position: absolute; content: ""; top: 25px; bottom: 3px; left: 12px; width: 1px; background: var(--border); }
+    .workflow-step strong { display: block; color: #dce7f7; font-size: 0.79rem; margin: 2px 0 4px; }
+    .workflow-step p { color: var(--muted); font-size: 0.73rem; line-height: 1.5; }
+    .format-list { display: grid; gap: 9px; }
+    .format-item {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 11px;
+      background: rgba(8, 17, 32, 0.52); border: 1px solid rgba(148, 163, 184, 0.1);
+      border-radius: 8px; color: #cbd8e9; font-size: 0.77rem;
+    }
+    .format-item span:last-child { color: var(--muted); font-size: 0.71rem; }
+    .session-note { color: var(--muted); font-size: 0.78rem; line-height: 1.55; margin: -5px 0 14px; }
+    #spinner {
+      display: none; width: 16px; height: 16px; border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white; border-radius: 50%; animation: spin 0.75s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 1050px) {
+      .app-layout { grid-template-columns: 218px minmax(0, 1fr); }
+      .workspace { padding: 30px 25px 40px; }
+      .dashboard-grid { grid-template-columns: minmax(0, 1.35fr) minmax(235px, 0.85fr); }
+    }
+    @media (max-width: 800px) {
+      .app-layout { display: block; }
+      .sidebar { position: relative; height: auto; padding: 13px 18px 11px; border-right: 0; border-bottom: 1px solid var(--border); }
+      .brand { margin: 0 0 13px; }
+      .nav-label, .sidebar-footer { display: none; }
+      .side-nav { display: flex; overflow-x: auto; gap: 6px; padding-bottom: 2px; }
+      .nav-link { flex: 0 0 auto; min-height: 37px; padding: 0 10px; font-size: 0.77rem; }
+      .workspace { padding: 25px 20px 36px; }
+      .dashboard-grid { grid-template-columns: 1fr; }
+      .support-column { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+      .support-column .card { margin-bottom: 0; }
+    }
+    @media (max-width: 560px) {
+      .workspace { padding: 22px 14px 30px; }
+      .topbar { flex-direction: column; margin-bottom: 20px; }
+      .header-actions { padding: 0; }
+      .row { grid-template-columns: 1fr; gap: 13px; }
+      .card { padding: 17px 15px; }
+      .support-column { grid-template-columns: 1fr; }
+      .msg { max-width: 100%; }
+      .auth-controls { align-items: stretch !important; flex-direction: column; }
+      .auth-controls .btn { align-self: flex-start; }
+      .job-meta { align-items: flex-start !important; flex-direction: column; }
+    }
+  </style>
 </head>
 <body>
-  <main class="app-shell">
-    <header class="topbar">
-      <div class="brand">
-        <div class="brand-mark">AI</div>
+  <div class="app-layout">
+    <aside class="sidebar">
+      <a class="brand" href="#overview" aria-label="Multi-Agent Research and Security System home">
+        <span class="brand-mark" aria-hidden="true">AI</span>
+        <span>
+          <span class="brand-name">Multi-Agent Research</span>
+          <span class="brand-caption">RESEARCH &amp; SECURITY SYSTEM</span>
+        </span>
+      </a>
+
+      <p class="nav-label">Workspace</p>
+      <nav class="side-nav" aria-label="Main navigation">
+        <a class="nav-link active" href="#overview"><span class="nav-icon" aria-hidden="true">⌂</span>Overview</a>
+        <a class="nav-link" href="#research"><span class="nav-icon" aria-hidden="true">＋</span>New research</a>
+        <a class="nav-link" href="#research"><span class="nav-icon" aria-hidden="true">▤</span>Research jobs</a>
+        <a class="nav-link" href="#sessions"><span class="nav-icon" aria-hidden="true">◷</span>Sessions</a>
+        <a class="nav-link" href="#settings"><span class="nav-icon" aria-hidden="true">⚙</span>Settings</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <strong>Multi-agent research</strong>
+        <p>LangGraph · TensorZero<br>AWS Bedrock Guardrails</p>
+      </div>
+    </aside>
+
+    <main class="workspace" id="overview">
+      <header class="topbar">
         <div>
-          <h1>Multi-Agent Research & Security System</h1>
-          <p class="subtitle">Powered by LangGraph · TensorZero · AWS Bedrock Guardrails · Developed by Eyoongebob Cyril</p>
+          <p class="eyebrow">Workspace / Overview</p>
+          <h1>Multi-Agent Research and Security System</h1>
+          <p class="subtitle">Launch research, review generated reports, and manage session context from one workspace.</p>
         </div>
-      </div>
-    </header>
-
-    <div class="card">
-      <div class="section-title">Authentication</div>
-      <div style="display:flex;gap:10px;align-items:flex-end">
-        <div style="flex:1">
-          <label>API Key</label>
-          <input type="password" id="api-key" placeholder="Enter your X-API-Key (saved in browser)">
+        <div class="header-actions">
+          <span class="connection-badge" id="connection-badge" aria-live="polite">
+            <span class="connection-dot" aria-hidden="true"></span>
+            <span id="connection-label">API key not configured</span>
+          </span>
         </div>
-        <button class="btn btn-secondary" onclick="saveApiKey()" style="white-space:nowrap">Save Key</button>
-      </div>
-      <div id="key-status" style="font-size:0.8rem;color:#9aa9bf;margin-top:8px"></div>
-    </div>
+      </header>
 
-    <div class="card">
-      <div class="section-title">New Research Job</div>
-      <div style="margin-bottom:16px">
-        <label>Research Topic</label>
-        <input type="text" id="topic" placeholder="e.g. Quantum computing advances in 2024">
-      </div>
-      <div class="row">
-        <div>
-          <label>Output Format</label>
-          <select id="format">
-            <option value="text">Plain Text</option>
-            <option value="pdf">PDF Export</option>
-            <option value="json">Structured JSON</option>
-          </select>
+      <div class="dashboard-grid">
+        <div class="main-column">
+          <section class="card" id="research" aria-labelledby="research-title">
+            <div class="card-header">
+              <div>
+                <h2 class="section-title" id="research-title">Create research job</h2>
+                <p class="card-description">Define a topic and choose how you want the research delivered.</p>
+              </div>
+            </div>
+            <div class="field-spaced">
+              <label for="topic">Research topic</label>
+              <input type="text" id="topic" placeholder="e.g. Quantum computing advances in 2026">
+            </div>
+            <div class="row">
+              <div>
+                <label for="format">Output format</label>
+                <select id="format">
+                  <option value="text">Plain text</option>
+                  <option value="pdf">PDF export</option>
+                  <option value="json">Structured JSON</option>
+                </select>
+              </div>
+              <div>
+                <label for="session-id">Session ID <span style="font-weight:400">(optional)</span></label>
+                <input type="text" id="session-id" placeholder="Generated automatically if blank">
+              </div>
+            </div>
+            <button class="btn" onclick="submitResearch()" id="submit-btn">
+              Start research
+              <span id="spinner" aria-hidden="true"></span>
+            </button>
+          </section>
+
+          <section class="card" id="result-card" aria-labelledby="results-title" style="display:none">
+            <div class="card-header">
+              <div>
+                <h2 class="section-title" id="results-title">Job result</h2>
+                <p class="card-description">Review the latest report and export or compare it.</p>
+              </div>
+            </div>
+            <div class="job-meta" style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+              <span id="job-status" class="status status-pending">Pending</span>
+              <span style="color:var(--muted);font-size:0.76rem" id="job-id-label"></span>
+            </div>
+            <div id="report-box" style="display:none"></div>
+            <div class="actions" id="export-actions" style="display:none">
+              <button class="btn btn-secondary" onclick="downloadPDF()">Download PDF</button>
+              <button class="btn btn-secondary" onclick="copyJSON()">Copy JSON</button>
+              <button class="btn btn-secondary" onclick="loadDiff()">Compare with previous</button>
+            </div>
+            <div id="diff-box" style="display:none;margin-top:14px"></div>
+          </section>
         </div>
-        <div>
-          <label>Session ID (optional)</label>
-          <input type="text" id="session-id" placeholder="Leave blank to auto-generate">
+
+        <aside class="support-column" aria-label="Research workflow information">
+          <section class="card helper-card">
+            <div class="card-header">
+              <div>
+                <h2 class="section-title">Workflow</h2>
+                <p class="card-description">From research request to review-ready output.</p>
+              </div>
+            </div>
+            <div class="workflow-list">
+              <div class="workflow-step">
+                <span class="step-marker" aria-hidden="true">01</span>
+                <div><strong>Define your topic</strong><p>Enter the question or subject you want the agents to investigate.</p></div>
+              </div>
+              <div class="workflow-step">
+                <span class="step-marker" aria-hidden="true">02</span>
+                <div><strong>Run the research</strong><p>Submit the job and follow its status as the system processes it.</p></div>
+              </div>
+              <div class="workflow-step">
+                <span class="step-marker" aria-hidden="true">03</span>
+                <div><strong>Review and export</strong><p>Inspect the report, copy structured data, or download a PDF.</p></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="card-header">
+              <div>
+                <h2 class="section-title">Available outputs</h2>
+                <p class="card-description">Select a format when creating a job.</p>
+              </div>
+            </div>
+            <div class="format-list">
+              <div class="format-item"><span>Plain text</span><span>Readable report</span></div>
+              <div class="format-item"><span>PDF export</span><span>Downloadable</span></div>
+              <div class="format-item"><span>Structured JSON</span><span>Machine-readable</span></div>
+            </div>
+          </section>
+        </aside>
+      </div>
+
+      <section class="card" id="sessions" aria-labelledby="sessions-title" style="margin-top:18px">
+        <div class="card-header">
+          <div>
+            <h2 class="section-title" id="sessions-title">Session history</h2>
+            <p class="card-description">Conversation context is reused across requests in the current session.</p>
+          </div>
+          <button class="btn btn-secondary" style="font-size:0.78rem;padding:7px 11px;min-height:35px" onclick="newSession()">New session</button>
         </div>
-      </div>
-      <button class="btn" onclick="submitResearch()" id="submit-btn">
-        Start Research
-        <span id="spinner"></span>
-      </button>
-    </div>
+        <p class="session-note">Start a fresh session at any time to separate a new line of research from the current conversation.</p>
+        <div id="session-box"><p style="color:var(--muted);font-size:0.82rem">No session active.</p></div>
+      </section>
 
-    <div class="card" id="result-card" style="display:none">
-      <div class="section-title">Result</div>
-      <div style="margin-bottom:12px">
-        <span id="job-status" class="status status-pending">Pending</span>
-        <span style="color:#9aa9bf;font-size:0.8rem;margin-left:10px" id="job-id-label"></span>
-      </div>
-      <div id="report-box" style="display:none"></div>
-      <div class="actions" id="export-actions" style="display:none">
-        <button class="btn btn-secondary" onclick="downloadPDF()">Download PDF</button>
-        <button class="btn btn-secondary" onclick="copyJSON()">Copy JSON</button>
-        <button class="btn btn-secondary" onclick="loadDiff()">Show Changes vs Previous</button>
-      </div>
-      <div id="diff-box" style="display:none;margin-top:14px"></div>
-    </div>
-
-    <div class="card">
-      <div class="section-title">
-        <span>Session History</span>
-        <button class="btn btn-secondary" style="font-size:0.8rem;padding:6px 12px" onclick="newSession()">New Session</button>
-      </div>
-      <p style="color:#9aa9bf;font-size:0.8rem;margin-bottom:12px">Session ID is auto-reused across requests so history builds up. Click "New Session" to start fresh.</p>
-      <div id="session-box"><p style="color:#9aa9bf;font-size:0.85rem">No session active.</p></div>
-    </div>
-  </main>
+      <section class="card" id="settings" aria-labelledby="settings-title">
+        <div class="card-header">
+          <div>
+            <h2 class="section-title" id="settings-title">API authentication</h2>
+            <p class="card-description">Your API key is stored in this browser and sent with requests.</p>
+          </div>
+        </div>
+        <div class="auth-controls" style="display:flex;gap:10px;align-items:flex-end">
+          <div style="flex:1">
+            <label for="api-key">API key</label>
+            <input type="password" id="api-key" placeholder="Enter your X-API-Key">
+          </div>
+          <button class="btn btn-secondary" onclick="saveApiKey()" style="white-space:nowrap">Save key</button>
+        </div>
+        <div id="key-status" style="font-size:0.77rem;color:var(--muted);margin-top:9px" aria-live="polite"></div>
+      </section>
+    </main>
+  </div>
 
   <script>
     const API = window.location.hostname === 'localhost' ? 'http://localhost:8000' : '';
@@ -347,25 +612,42 @@
                  : { 'Content-Type': 'application/json' };
     }
 
+    function updateConnectionBadge() {
+      const configured = Boolean(getApiKey());
+      document.getElementById('connection-badge').classList.toggle('is-configured', configured);
+      document.getElementById('connection-label').textContent = configured
+        ? 'API key configured'
+        : 'API key not configured';
+    }
+
     function saveApiKey() {
       const key = document.getElementById('api-key').value.trim();
       if (key) {
         localStorage.setItem('research_agent_api_key', key);
         document.getElementById('key-status').textContent = 'API key saved.';
-        document.getElementById('key-status').style.color = '#3fb950';
+        document.getElementById('key-status').style.color = 'var(--success)';
       } else {
         localStorage.removeItem('research_agent_api_key');
         document.getElementById('key-status').textContent = 'API key cleared.';
-        document.getElementById('key-status').style.color = '#8b949e';
+        document.getElementById('key-status').style.color = 'var(--muted)';
       }
+      updateConnectionBadge();
     }
 
     // Restore key indicator on load
     window.addEventListener('DOMContentLoaded', () => {
+      updateConnectionBadge();
       if (getApiKey()) {
         document.getElementById('key-status').textContent = 'API key loaded from browser storage.';
-        document.getElementById('key-status').style.color = '#3fb950';
+        document.getElementById('key-status').style.color = 'var(--success)';
       }
+
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+          document.querySelectorAll('.nav-link').forEach(item => item.classList.remove('active'));
+          link.classList.add('active');
+        });
+      });
     });
 
     async function submitResearch() {
