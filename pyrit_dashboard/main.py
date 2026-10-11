@@ -266,6 +266,7 @@ td{padding:10px 12px;border-bottom:1px solid #21262d;font-size:0.85rem;vertical-
 <body>
 <h1>PyRIT Red Team Dashboard</h1>
 <p class="subtitle">AI Security Testing · PyRIT 0.14.0 · SQLite + Redis persistence</p>
+<p class="subtitle">Developer: Cyril Enow Eyong-Ebob</p>
 
 <div class="card">
   <div class="section-title">System Status</div>
