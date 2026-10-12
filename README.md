@@ -182,14 +182,13 @@ Replace the `REPLACE_ME` values:
   "OPENAI_API_KEY":    "sk-...",
   "GROQ_API_KEY":      "gsk_...",
   "LANGSMITH_API_KEY": "ls__...",
-  "LANGCHAIN_ENDPOINT": "https://eu.api.smith.langchain.com",
+  "LANGCHAIN_ENDPOINT": "https://api.smith.langchain.com",
   "LANGCHAIN_PROJECT": "research-agent"
 }
 ```
 
-Use the endpoint for the region of your LangSmith workspace. For a workspace at
-`eu.smith.langchain.com`, use `https://eu.api.smith.langchain.com`. Save the
-secret, then force a new ECS deployment so the app reloads it.
+This configuration uses the US LangSmith endpoint. Save the secret, then force
+a new ECS deployment so the app reloads it.
 
 **Optional — set an API key to protect your endpoints:**
 

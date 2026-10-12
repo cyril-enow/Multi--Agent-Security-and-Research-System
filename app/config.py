@@ -37,7 +37,7 @@ class Config:
         self.langchain_project: str = data.get("LANGCHAIN_PROJECT", "research-agent")
         self.langchain_endpoint: str = data.get(
             "LANGCHAIN_ENDPOINT",
-            "https://eu.api.smith.langchain.com",
+            "https://api.smith.langchain.com",
         )
         self.langsmith_dataset: str = data.get("LANGSMITH_DATASET", "research-agent-reports")
 
