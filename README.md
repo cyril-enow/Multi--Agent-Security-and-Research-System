@@ -182,14 +182,16 @@ Replace the `REPLACE_ME` values:
   "OPENAI_API_KEY":    "sk-...",
   "GROQ_API_KEY":      "gsk_...",
   "LANGSMITH_API_KEY": "ls__...",
-  "LANGCHAIN_ENDPOINT": "https://aws.api.smith.langchain.com",
-  "LANGCHAIN_PROJECT": "research-agent"
+  "LANGSMITH_ENDPOINT": "https://aws.api.smith.langchain.com",
+  "LANGCHAIN_PROJECT": "research-agent",
+  "LANGSMITH_WORKSPACE_ID": "<workspace-id-from-your-LangSmith-URL>"
 }
 ```
 
 This endpoint corresponds to the AWS-hosted LangSmith workspace at
 `aws.smith.langchain.com`. Save the secret, then force a new ECS deployment so
-the app reloads it.
+the app reloads it. Set `LANGSMITH_WORKSPACE_ID` to the ID after `/o/` in
+your LangSmith workspace URL if the API key has access to multiple workspaces.
 
 **Optional — set an API key to protect your endpoints:**
 

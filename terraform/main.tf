@@ -653,7 +653,7 @@ resource "aws_secretsmanager_secret_version" "config" {
     # Observability
     LANGSMITH_API_KEY = "REPLACE_ME"
     LANGCHAIN_PROJECT = "research-agent"
-    LANGCHAIN_ENDPOINT = "https://aws.api.smith.langchain.com"
+    LANGSMITH_ENDPOINT = "https://aws.api.smith.langchain.com"
     LANGSMITH_DATASET = "research-agent-reports"
 
     # Auth

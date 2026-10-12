@@ -2,7 +2,10 @@ import os
 import socket
 import boto3
 import json
+import logging
 from functools import lru_cache
+
+logger = logging.getLogger(__name__)
 
 
 @lru_cache(maxsize=1)
@@ -35,10 +38,11 @@ class Config:
         # LangSmith tracing
         self.langsmith_api_key: str = data.get("LANGSMITH_API_KEY", "")
         self.langchain_project: str = data.get("LANGCHAIN_PROJECT", "research-agent")
-        self.langchain_endpoint: str = data.get(
-            "LANGCHAIN_ENDPOINT",
-            "https://aws.api.smith.langchain.com",
+        self.langsmith_endpoint: str = data.get(
+            "LANGSMITH_ENDPOINT",
+            data.get("LANGCHAIN_ENDPOINT", "https://aws.api.smith.langchain.com"),
         )
+        self.langsmith_workspace_id: str = data.get("LANGSMITH_WORKSPACE_ID", "")
         self.langsmith_dataset: str = data.get("LANGSMITH_DATASET", "research-agent-reports")
 
         # Semantic cache
@@ -85,7 +89,23 @@ class Config:
         self.db_pool_max: int = int(data.get("DB_POOL_MAX", 10))
 
         if self.langsmith_api_key:
+            os.environ["LANGSMITH_TRACING"] = "true"
+            os.environ["LANGSMITH_API_KEY"] = self.langsmith_api_key
+            os.environ["LANGSMITH_ENDPOINT"] = self.langsmith_endpoint
+            os.environ["LANGSMITH_PROJECT"] = self.langchain_project
+            if self.langsmith_workspace_id:
+                os.environ["LANGSMITH_WORKSPACE_ID"] = self.langsmith_workspace_id
+
+            # Keep legacy aliases for libraries that still read LANGCHAIN_* names.
             os.environ["LANGCHAIN_TRACING_V2"] = "true"
             os.environ["LANGCHAIN_API_KEY"] = self.langsmith_api_key
             os.environ["LANGCHAIN_PROJECT"] = self.langchain_project
-            os.environ["LANGCHAIN_ENDPOINT"] = self.langchain_endpoint
+            os.environ["LANGCHAIN_ENDPOINT"] = self.langsmith_endpoint
+            logger.info(
+                "LangSmith tracing enabled: endpoint=%s project=%s workspace_id_configured=%s",
+                self.langsmith_endpoint,
+                self.langchain_project,
+                bool(self.langsmith_workspace_id),
+            )
+        else:
+            logger.warning("LangSmith tracing disabled: LANGSMITH_API_KEY is not configured")
