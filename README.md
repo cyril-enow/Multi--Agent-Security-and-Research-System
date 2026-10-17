@@ -191,7 +191,7 @@ Replace the `REPLACE_ME` values:
 This endpoint corresponds to the AWS-hosted LangSmith workspace at
 `aws.smith.langchain.com`. Save the secret, then force a new ECS deployment so
 the app reloads it. Set `LANGSMITH_WORKSPACE_ID` to the ID after `/o/` in
-your LangSmith workspace URL if the API key has access to multiple workspaces.
+your LangSmith workspace URL if the API key has access to multiple workspaces..
 
 **Optional — set an API key to protect your endpoints:**
 
